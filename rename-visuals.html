@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variable & Value Rename Tool - Visual Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            padding: 30px;
+            background: #f0f4f8;
+            font-family: 'Oswald', Arial, sans-serif;
+            color: #000;
+        }
+        .page-container { max-width: 1200px; margin: 0 auto; }
+
+        /* HEADER */
+        .header {
+            background: #004080;
+            color: white;
+            padding: 28px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        .header h1 { font-size: 28px; letter-spacing: 2px; }
+        .header p { font-size: 14px; margin-top: 8px; opacity: 0.9; }
+        .header .subtitle { font-size: 11px; margin-top: 5px; opacity: 0.8; }
+
+        /* TOOL SECTION */
+        .tool-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .tool-title {
+            background: #004080;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        /* WORKFLOW */
+        .workflow {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .step-box { text-align: center; }
+        .step-label {
+            background: #004080;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .file-box {
+            background: #fff;
+            border: 3px solid #004080;
+            border-radius: 10px;
+            padding: 18px;
+            width: 200px;
+            margin-bottom: 8px;
+        }
+        .file-box.upload   { border-color: #17a2b8; background: linear-gradient(135deg,#f0f9ff,#e1f5fe); }
+        .file-box.column   { border-color: #6f42c1; background: linear-gradient(135deg,#f8f4ff,#ede7f6); }
+        .file-box.values   { border-color: #fd7e14; background: linear-gradient(135deg,#fff8f0,#fff0e1); }
+        .file-box.output   { border-color: #28a745; background: linear-gradient(135deg,#f0fff4,#e8f5e9); }
+
+        .file-icon { margin-bottom: 10px; display: flex; justify-content: center; align-items: center; }
+        .file-name { font-size: 14px; font-weight: 700; color: #004080; margin-bottom: 5px; }
+        .file-box.upload .file-name  { color: #17a2b8; }
+        .file-box.column .file-name  { color: #6f42c1; }
+        .file-box.values .file-name  { color: #fd7e14; }
+        .file-box.output .file-name  { color: #155724; }
+        .file-desc { font-size: 10px; color: #666; }
+        .step-desc { font-size: 11px; color: #666; margin-top: 5px; max-width: 200px; }
+        .arrow { font-size: 28px; color: #004080; font-weight: 700; margin-top: 60px; }
+
+        /* FORMAT BADGES */
+        .format-badges { display: flex; gap: 6px; margin-top: 10px; justify-content: center; flex-wrap: wrap; }
+        .format-badge {
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 9px;
+            font-weight: 700;
+        }
+        .format-badge.csv   { border: 2px solid #004080; background: #e7f3ff; color: #004080; }
+        .format-badge.excel { border: 2px solid #28a745; background: #d4edda; color: #155724; }
+
+        /* MINI RENAME ROWS in step boxes */
+        .mini-rename-rows { margin-top: 10px; display: flex; flex-direction: column; gap: 5px; }
+        .mini-rename-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 4px;
+            align-items: center;
+            font-size: 8px;
+        }
+        .mini-old {
+            background: #fff;
+            border: 1px solid #6f42c1;
+            border-radius: 3px;
+            padding: 3px 5px;
+            color: #6f42c1;
+            font-weight: 600;
+            text-align: center;
+        }
+        .mini-arrow-sm { color: #6f42c1; font-size: 10px; font-weight: 700; }
+        .mini-new {
+            background: #28a745;
+            border-radius: 3px;
+            padding: 3px 5px;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* VALUE RENAME mini */
+        .mini-val-rename { margin-top: 10px; display: flex; flex-direction: column; gap: 5px; }
+        .mini-val-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 4px;
+            align-items: center;
+            font-size: 8px;
+        }
+        .mini-val-old {
+            background: #fff;
+            border: 1px solid #fd7e14;
+            border-radius: 3px;
+            padding: 3px 5px;
+            color: #fd7e14;
+            font-weight: 600;
+            text-align: center;
+        }
+        .mini-val-arrow { color: #fd7e14; font-size: 10px; font-weight: 700; }
+        .mini-val-new {
+            background: #28a745;
+            border-radius: 3px;
+            padding: 3px 5px;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* RESULT TABLE */
+        .result-table { margin-top: 10px; font-size: 8px; width: 100%; border-collapse: collapse; }
+        .result-table th { background: #004080; color: white; padding: 4px 6px; text-align: left; font-weight: 600; }
+        .result-table th.renamed { background: #28a745; }
+        .result-table td { padding: 3px 6px; border-bottom: 1px solid #ddd; }
+        .result-table tr:nth-child(even) { background: #f8f9fa; }
+
+        /* DIVIDER */
+        .section-divider {
+            border-top: 2px dashed #004080;
+            margin: 30px 0 25px;
+        }
+        .section-subtitle {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: #004080;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* BEFORE/AFTER GRID */
+        .before-after-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: start;
+            margin-bottom: 30px;
+        }
+        .before-section, .after-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .before-section { border: 2px solid #dc3545; }
+        .after-section  { border: 2px solid #28a745; }
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 12px;
+            padding: 6px;
+            border-radius: 4px;
+        }
+        .before-section .section-label { background: #f8d7da; color: #721c24; }
+        .after-section .section-label  { background: #d4edda; color: #155724; }
+
+        .transform-arrow { font-size: 40px; color: #004080; text-align: center; margin-top: 60px; }
+
+        .mini-table { font-size: 9px; width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .mini-table th { background: #004080; color: white; padding: 4px 6px; text-align: left; }
+        .mini-table th.renamed-col { background: #28a745; }
+        .mini-table td { padding: 3px 6px; border-bottom: 1px solid #ddd; background: white; }
+        .mini-table td.renamed-val { color: #28a745; font-weight: 700; }
+        .mini-table td.original-val { color: #dc3545; }
+
+        .change-badge {
+            display: inline-block;
+            font-size: 7px;
+            padding: 1px 5px;
+            border-radius: 3px;
+            margin-left: 4px;
+            font-weight: 700;
+        }
+        .change-badge.renamed { background: #28a745; color: white; }
+        .change-badge.same    { background: #6c757d; color: white; }
+
+        /* TWO PANEL SECTION */
+        .two-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; }
+        .panel {
+            background: #f8f9fa;
+            border: 2px solid #004080;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .panel-header {
+            background: #004080;
+            color: white;
+            margin: -20px -20px 15px -20px;
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .panel-icon {
+            width: 32px; height: 32px;
+            background: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .panel p { font-size: 11px; color: #444; line-height: 1.6; margin-bottom: 10px; font-weight: 500; }
+
+        .step-list { list-style: none; margin-top: 10px; }
+        .step-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 11px;
+            color: #333;
+            line-height: 1.5;
+        }
+        .step-num {
+            background: #004080;
+            color: white;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* BULK ACTIONS VISUAL */
+        .bulk-visual {
+            margin-top: 12px;
+            background: white;
+            border: 2px solid #004080;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .bulk-header {
+            background: #004080;
+            color: white;
+            padding: 6px 10px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .bulk-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr auto;
+            gap: 6px;
+            padding: 6px 10px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+            font-size: 9px;
+        }
+        .bulk-row:last-child { border-bottom: none; }
+        .bulk-input {
+            background: #f0f4f8;
+            border: 1px solid #ced4da;
+            border-radius: 3px;
+            padding: 3px 6px;
+            color: #333;
+        }
+        .bulk-btn {
+            background: #004080;
+            color: white;
+            border-radius: 3px;
+            padding: 3px 8px;
+            font-size: 8px;
+            font-weight: 700;
+        }
+        .bulk-select {
+            background: #f0f4f8;
+            border: 1px solid #ced4da;
+            border-radius: 3px;
+            padding: 3px 6px;
+            color: #333;
+            grid-column: 1 / 4;
+        }
+
+        /* FEATURE BADGES */
+        .feature-grid-sm {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .feature-item-sm {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 10px;
+            color: #333;
+            line-height: 1.4;
+        }
+        .check-circle {
+            width: 16px; height: 16px;
+            background: #28a745;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .tip-box {
+            margin-top: 15px;
+            padding: 10px 14px;
+            background: #e7f3ff;
+            border-radius: 6px;
+            font-size: 11px;
+            border-left: 4px solid #004080;
+        }
+        .tip-box strong { color: #004080; }
+
+        /* INFO SECTION */
+        .info-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px dashed #004080;
+        }
+        .info-box {
+            background: #f8f9fa;
+            border: 2px solid #004080;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .info-box h4 {
+            color: #004080;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        /* USE CASES */
+        .use-case-list { margin-top: 12px; }
+        .use-case-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .use-case-icon {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .use-case-details { font-size: 11px; color: #333; line-height: 1.5; }
+        .use-case-details strong { color: #004080; }
+
+        .footer {
+            background: #004080;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        @media (max-width: 1000px) {
+            .workflow { flex-direction: column; align-items: center; }
+            .arrow { transform: rotate(90deg); margin: 10px 0; }
+            .two-panel { grid-template-columns: 1fr; }
+            .before-after-grid { grid-template-columns: 1fr; }
+            .transform-arrow { transform: rotate(90deg); margin: 0; }
+            .info-section { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="page-container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <h1>VARIABLE &amp; VALUE RENAME TOOL</h1>
+        <p>Rename Column Variables and Their Values in Any Dataset</p>
+        <p class="subtitle">CSV &amp; Excel Support • Bulk Operations • Before/After Preview • Change Log Export</p>
+    </div>
+
+    <!-- MAIN TOOL SECTION -->
+    <div class="tool-section">
+
+        <!-- ── WORKFLOW ── -->
+        <div class="tool-title">COMBINATION WORKFLOW</div>
+        <div class="workflow">
+
+            <!-- STEP 1 -->
+            <div class="step-box">
+                <div class="step-label">STEP 1: UPLOAD</div>
+                <div class="file-box upload">
+                    <div class="file-icon">
+                        <svg width="45" height="45" viewBox="0 0 45 45">
+                            <rect x="8" y="6" width="20" height="26" rx="2" fill="#d1ecf1" stroke="#17a2b8" stroke-width="2"/>
+                            <path d="M24 6 L28 10 L28 32 L8 32 L8 6 Z" fill="none" stroke="#17a2b8" stroke-width="2"/>
+                            <path d="M24 6 L24 10 L28 10" fill="#a8d8ea" stroke="#17a2b8" stroke-width="1.5"/>
+                            <path d="M22.5 30 L22.5 22 L19 26 M22.5 22 L26 26" stroke="#17a2b8" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="file-name">Upload Dataset</div>
+                    <div class="file-desc">CSV or Excel file</div>
+                    <div class="format-badges">
+                        <span class="format-badge csv">.CSV</span>
+                        <span class="format-badge excel">.XLS</span>
+                        <span class="format-badge excel">.XLSX</span>
+                    </div>
+                </div>
+                <div class="step-desc">Select your data file to begin renaming</div>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <!-- STEP 2 -->
+            <div class="step-box">
+                <div class="step-label">STEP 2: RENAME COLUMNS</div>
+                <div class="file-box column">
+                    <div class="file-icon">
+                        <svg width="45" height="45" viewBox="0 0 45 45">
+                            <rect x="5" y="8" width="35" height="8" rx="2" fill="#ede7f6" stroke="#6f42c1" stroke-width="2"/>
+                            <rect x="5" y="20" width="35" height="8" rx="2" fill="#ede7f6" stroke="#6f42c1" stroke-width="2"/>
+                            <rect x="5" y="32" width="35" height="8" rx="2" fill="#ede7f6" stroke="#6f42c1" stroke-width="2"/>
+                            <line x1="17" y1="8" x2="17" y2="40" stroke="#6f42c1" stroke-width="1.5" stroke-dasharray="3 2"/>
+                        </svg>
+                    </div>
+                    <div class="file-name">Rename Columns</div>
+                    <div class="file-desc">Type new column headers</div>
+                    <div class="mini-rename-rows">
+                        <div class="mini-rename-row">
+                            <span class="mini-old">dist_code</span>
+                            <span class="mini-arrow-sm">→</span>
+                            <span class="mini-new">District</span>
+                        </div>
+                        <div class="mini-rename-row">
+                            <span class="mini-old">tot_cases</span>
+                            <span class="mini-arrow-sm">→</span>
+                            <span class="mini-new">Total Cases</span>
+                        </div>
+                        <div class="mini-rename-row">
+                            <span class="mini-old">pop_2024</span>
+                            <span class="mini-arrow-sm">→</span>
+                            <span class="mini-new">Population</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-desc">Enter human-readable names for your columns</div>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <!-- STEP 3 -->
+            <div class="step-box">
+                <div class="step-label">STEP 3: RENAME VALUES</div>
+                <div class="file-box values">
+                    <div class="file-icon">
+                        <svg width="45" height="45" viewBox="0 0 45 45">
+                            <circle cx="22.5" cy="22.5" r="16" fill="none" stroke="#fd7e14" stroke-width="2"/>
+                            <text x="22.5" y="18" text-anchor="middle" font-size="7" fill="#fd7e14" font-family="monospace" font-weight="bold">1→Yes</text>
+                            <text x="22.5" y="27" text-anchor="middle" font-size="7" fill="#fd7e14" font-family="monospace" font-weight="bold">2→No</text>
+                            <text x="22.5" y="36" text-anchor="middle" font-size="7" fill="#fd7e14" font-family="monospace" font-weight="bold">3→Maybe</text>
+                        </svg>
+                    </div>
+                    <div class="file-name">Rename Values</div>
+                    <div class="file-desc">Replace coded values</div>
+                    <div class="mini-val-rename">
+                        <div class="mini-val-row">
+                            <span class="mini-val-old">1</span>
+                            <span class="mini-val-arrow">→</span>
+                            <span class="mini-val-new">Yes</span>
+                        </div>
+                        <div class="mini-val-row">
+                            <span class="mini-val-old">0</span>
+                            <span class="mini-val-arrow">→</span>
+                            <span class="mini-val-new">No</span>
+                        </div>
+                        <div class="mini-val-row">
+                            <span class="mini-val-old">WU</span>
+                            <span class="mini-val-arrow">→</span>
+                            <span class="mini-val-new">Western Urban</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-desc">Decode coded values into readable labels</div>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <!-- STEP 4 -->
+            <div class="step-box">
+                <div class="step-label">STEP 4: DOWNLOAD</div>
+                <div class="file-box output">
+                    <div class="file-icon">
+                        <svg width="45" height="45" viewBox="0 0 45 45">
+                            <circle cx="22.5" cy="22.5" r="18" fill="#28a745"/>
+                            <path d="M22.5 12 L22.5 28 M16 22 L22.5 28 L29 22" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            <line x1="14" y1="33" x2="31" y2="33" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="file-name">Download Renamed</div>
+                    <div class="file-desc">CSV or Excel format</div>
+                    <table class="result-table">
+                        <thead>
+                            <tr>
+                                <th class="renamed">District</th>
+                                <th class="renamed">Total Cases</th>
+                                <th class="renamed">Confirmed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Western Urban</td><td>89</td><td>Yes</td></tr>
+                            <tr><td>Bombali</td><td>45</td><td>No</td></tr>
+                            <tr><td>Bo</td><td>67</td><td>Yes</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="format-badges">
+                        <span class="format-badge csv">.CSV</span>
+                        <span class="format-badge excel">.XLSX</span>
+                    </div>
+                </div>
+                <div class="step-desc">Export clean, renamed dataset</div>
+            </div>
+        </div>
+
+        <!-- ── BEFORE / AFTER : COLUMNS ── -->
+        <div class="section-divider"></div>
+        <div class="section-subtitle">Before &amp; After — Column Renaming</div>
+
+        <div class="before-after-grid">
+            <div class="before-section">
+                <div class="section-label">BEFORE: Raw Column Headers</div>
+                <table class="mini-table">
+                    <thead>
+                        <tr>
+                            <th>dist_code</th>
+                            <th>tot_cases</th>
+                            <th>conf_status</th>
+                            <th>pop_2024</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>WU</td><td>89</td><td>1</td><td>1200000</td></tr>
+                        <tr><td>BO</td><td>67</td><td>1</td><td>250000</td></tr>
+                        <tr><td>BM</td><td>45</td><td>0</td><td>310000</td></tr>
+                        <tr><td>KN</td><td>54</td><td>1</td><td>180000</td></tr>
+                    </tbody>
+                </table>
+                <div style="margin-top:8px; font-size:10px; color:#721c24; padding:6px; background:#f8d7da; border-radius:4px;">
+                    ⚠ Abbreviated, cryptic column names — hard to understand
+                </div>
+            </div>
+
+            <div class="transform-arrow">→</div>
+
+            <div class="after-section">
+                <div class="section-label">AFTER: Human-Readable Headers</div>
+                <table class="mini-table">
+                    <thead>
+                        <tr>
+                            <th class="renamed-col">District <span class="change-badge renamed">renamed</span></th>
+                            <th class="renamed-col">Total Cases <span class="change-badge renamed">renamed</span></th>
+                            <th class="renamed-col">Confirmed <span class="change-badge renamed">renamed</span></th>
+                            <th class="renamed-col">Population <span class="change-badge renamed">renamed</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>WU</td><td>89</td><td>1</td><td>1200000</td></tr>
+                        <tr><td>BO</td><td>67</td><td>1</td><td>250000</td></tr>
+                        <tr><td>BM</td><td>45</td><td>0</td><td>310000</td></tr>
+                        <tr><td>KN</td><td>54</td><td>1</td><td>180000</td></tr>
+                    </tbody>
+                </table>
+                <div style="margin-top:8px; font-size:10px; color:#155724; padding:6px; background:#d4edda; border-radius:4px;">
+                    ✓ All 4 columns renamed — data values unchanged
+                </div>
+            </div>
+        </div>
+
+        <!-- ── BEFORE / AFTER : VALUES ── -->
+        <div class="section-divider"></div>
+        <div class="section-subtitle">Before &amp; After — Value Renaming</div>
+
+        <div class="before-after-grid">
+            <div class="before-section">
+                <div class="section-label">BEFORE: Coded/Abbreviated Values</div>
+                <table class="mini-table">
+                    <thead>
+                        <tr>
+                            <th>District</th>
+                            <th>Confirmed</th>
+                            <th>Region</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="original-val">WU</td>
+                            <td class="original-val">1</td>
+                            <td class="original-val">W</td>
+                        </tr>
+                        <tr>
+                            <td class="original-val">BO</td>
+                            <td class="original-val">1</td>
+                            <td class="original-val">S</td>
+                        </tr>
+                        <tr>
+                            <td class="original-val">BM</td>
+                            <td class="original-val">0</td>
+                            <td class="original-val">N</td>
+                        </tr>
+                        <tr>
+                            <td class="original-val">KN</td>
+                            <td class="original-val">1</td>
+                            <td class="original-val">E</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="margin-top:8px; font-size:10px; color:#721c24; padding:6px; background:#f8d7da; border-radius:4px;">
+                    ⚠ Code values need a data dictionary to interpret
+                </div>
+            </div>
+
+            <div class="transform-arrow">→</div>
+
+            <div class="after-section">
+                <div class="section-label">AFTER: Full Descriptive Values</div>
+                <table class="mini-table">
+                    <thead>
+                        <tr>
+                            <th>District</th>
+                            <th>Confirmed</th>
+                            <th>Region</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="renamed-val">Western Urban</td>
+                            <td class="renamed-val">Yes</td>
+                            <td class="renamed-val">West</td>
+                        </tr>
+                        <tr>
+                            <td class="renamed-val">Bo</td>
+                            <td class="renamed-val">Yes</td>
+                            <td class="renamed-val">South</td>
+                        </tr>
+                        <tr>
+                            <td class="renamed-val">Bombali</td>
+                            <td class="renamed-val">No</td>
+                            <td class="renamed-val">North</td>
+                        </tr>
+                        <tr>
+                            <td class="renamed-val">Kenema</td>
+                            <td class="renamed-val">Yes</td>
+                            <td class="renamed-val">East</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="margin-top:8px; font-size:10px; color:#155724; padding:6px; background:#d4edda; border-radius:4px;">
+                    ✓ Values across 3 columns decoded — self-explanatory dataset
+                </div>
+            </div>
+        </div>
+
+        <!-- ── TWO PANELS: HOW EACH TAB WORKS ── -->
+        <div class="section-divider"></div>
+        <div class="section-subtitle">Two Powerful Renaming Modes</div>
+
+        <div class="two-panel">
+
+            <!-- COLUMN RENAMING PANEL -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-icon">📋</div>
+                    COLUMN RENAMING TAB
+                </div>
+                <p>View all columns with their data types (Numeric or Categorical) and enter new names for any you want to change. Blank fields keep the original name.</p>
+                <ul class="step-list">
+                    <li><div class="step-num">1</div><span>All columns listed with <strong>Numeric</strong> / <strong>Categorical</strong> type badges</span></li>
+                    <li><div class="step-num">2</div><span>Type a new name next to any column — leave blank to keep original</span></li>
+                    <li><div class="step-num">3</div><span>Duplicate name detection prevents accidental column collisions</span></li>
+                    <li><div class="step-num">4</div><span>Before/After column comparison shown in results</span></li>
+                </ul>
+                <!-- mini column UI mockup -->
+                <div style="margin-top:14px; background:white; border:2px solid #6f42c1; border-radius:6px; overflow:hidden;">
+                    <div style="background:#6f42c1; color:white; padding:5px 10px; font-size:9px; font-weight:700;">COLUMN LIST</div>
+                    <div style="padding:8px 10px; display:flex; flex-direction:column; gap:5px;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; align-items:center; font-size:8px;">
+                            <div style="background:#f8f9fa; border:1px solid #6f42c1; border-radius:3px; padding:4px 7px; display:flex; justify-content:space-between; align-items:center;">
+                                <strong>dist_code</strong>
+                                <span style="background:#dc3545; color:white; font-size:7px; padding:1px 5px; border-radius:10px;">Categorical</span>
+                            </div>
+                            <div style="border:1px solid #6f42c1; border-radius:3px; padding:4px 7px; color:#aaa; font-style:italic;">District</div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; align-items:center; font-size:8px;">
+                            <div style="background:#f8f9fa; border:1px solid #6f42c1; border-radius:3px; padding:4px 7px; display:flex; justify-content:space-between; align-items:center;">
+                                <strong>tot_cases</strong>
+                                <span style="background:#28a745; color:white; font-size:7px; padding:1px 5px; border-radius:10px;">Numeric</span>
+                            </div>
+                            <div style="border:1px solid #6f42c1; border-radius:3px; padding:4px 7px; color:#aaa; font-style:italic;">Total Cases</div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; align-items:center; font-size:8px;">
+                            <div style="background:#f8f9fa; border:1px solid #6f42c1; border-radius:3px; padding:4px 7px; display:flex; justify-content:space-between; align-items:center;">
+                                <strong>conf_status</strong>
+                                <span style="background:#dc3545; color:white; font-size:7px; padding:1px 5px; border-radius:10px;">Categorical</span>
+                            </div>
+                            <div style="border:1px solid #6f42c1; border-radius:3px; padding:4px 7px; color:#aaa; font-style:italic;">Confirmed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VALUE RENAMING PANEL -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-icon">🔤</div>
+                    VALUE RENAMING TAB
+                </div>
+                <p>Select a column, see all its unique values with frequency counts, and enter replacements. Bulk actions let you transform many values at once.</p>
+                <ul class="step-list">
+                    <li><div class="step-num">1</div><span>Choose a column from the dropdown to see all <strong>unique values</strong> &amp; their counts</span></li>
+                    <li><div class="step-num">2</div><span>Type new values individually OR use <strong>Bulk Replace</strong> for find &amp; replace</span></li>
+                    <li><div class="step-num">3</div><span>Apply text <strong>transformations</strong>: UPPERCASE, lowercase, Title Case, Capitalize</span></li>
+                    <li><div class="step-num">4</div><span>Duplicate value warnings flag accidental collisions before applying</span></li>
+                </ul>
+                <!-- mini value UI mockup -->
+                <div style="margin-top:14px; background:white; border:2px solid #fd7e14; border-radius:6px; overflow:hidden;">
+                    <div style="background:#fd7e14; color:white; padding:5px 10px; font-size:9px; font-weight:700;">UNIQUE VALUES — conf_status</div>
+                    <div style="padding:5px;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr auto; gap:5px; padding:5px; border-bottom:1px solid #eee; align-items:center; font-size:8px;">
+                            <span style="font-family:monospace; background:#f8f9fa; border:1px solid #fd7e14; border-radius:3px; padding:2px 5px; color:#fd7e14;">1</span>
+                            <input type="text" value="Yes" style="width:100%; border:1px solid #fd7e14; border-radius:3px; padding:2px 5px; font-size:8px; font-family:Oswald,sans-serif;" readonly>
+                            <span style="background:#004080; color:white; padding:1px 6px; border-radius:10px; font-size:8px;">52</span>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr auto; gap:5px; padding:5px; border-bottom:1px solid #eee; align-items:center; font-size:8px;">
+                            <span style="font-family:monospace; background:#f8f9fa; border:1px solid #fd7e14; border-radius:3px; padding:2px 5px; color:#fd7e14;">0</span>
+                            <input type="text" value="No" style="width:100%; border:1px solid #fd7e14; border-radius:3px; padding:2px 5px; font-size:8px; font-family:Oswald,sans-serif;" readonly>
+                            <span style="background:#004080; color:white; padding:1px 6px; border-radius:10px; font-size:8px;">31</span>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr auto; gap:5px; padding:5px; align-items:center; font-size:8px;">
+                            <span style="font-family:monospace; background:#f8f9fa; border:1px solid #fd7e14; border-radius:3px; padding:2px 5px; color:#fd7e14;">9</span>
+                            <input type="text" placeholder="Enter new value…" style="width:100%; border:1px solid #fd7e14; border-radius:3px; padding:2px 5px; font-size:8px; font-family:Oswald,sans-serif;" readonly>
+                            <span style="background:#004080; color:white; padding:1px 6px; border-radius:10px; font-size:8px;">5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── BULK ACTIONS VISUAL ── -->
+        <div class="section-divider"></div>
+        <div class="section-subtitle">Bulk Operations Explained</div>
+
+        <div class="two-panel">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-icon">🔍</div>
+                    FIND &amp; REPLACE
+                </div>
+                <p>Instantly replace a text pattern across ALL values in a selected column. Perfect for removing prefixes, fixing abbreviations, or standardising codes.</p>
+                <div class="bulk-visual">
+                    <div class="bulk-header">BULK FIND &amp; REPLACE</div>
+                    <div class="bulk-row">
+                        <span class="bulk-input">dist_</span>
+                        <span style="font-size:9px; color:#666;">→</span>
+                        <span class="bulk-input">(empty)</span>
+                        <span class="bulk-btn">Replace All</span>
+                    </div>
+                </div>
+                <div class="tip-box" style="margin-top:10px;">
+                    <strong>Example:</strong> Find <code>dist_</code> → Replace with <em>(blank)</em> converts <code>dist_Bombali</code> into <code>Bombali</code> across all rows instantly.
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-icon">🔤</div>
+                    TEXT TRANSFORMATIONS
+                </div>
+                <p>Apply formatting rules to all values at once. Standardise inconsistent casing without typing each replacement manually.</p>
+                <div class="bulk-visual">
+                    <div class="bulk-header">AVAILABLE TRANSFORMATIONS</div>
+                    <div style="padding:8px 10px; display:flex; flex-direction:column; gap:6px; font-size:9px;">
+                        <div style="display:flex; justify-content:space-between; padding:4px 8px; background:#f0f4f8; border-radius:3px;">
+                            <span style="color:#666;">UPPERCASE</span>
+                            <span style="color:#004080; font-weight:700;">western urban → WESTERN URBAN</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 8px; background:#f0f4f8; border-radius:3px;">
+                            <span style="color:#666;">lowercase</span>
+                            <span style="color:#004080; font-weight:700;">BOMBALI → bombali</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 8px; background:#f0f4f8; border-radius:3px;">
+                            <span style="color:#666;">Title Case</span>
+                            <span style="color:#004080; font-weight:700;">bo district → Bo District</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 8px; background:#f0f4f8; border-radius:3px;">
+                            <span style="color:#666;">Capitalize</span>
+                            <span style="color:#004080; font-weight:700;">kenema → Kenema</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── INFO SECTION ── -->
+        <div class="info-section">
+            <div class="info-box">
+                <h4>Common Use Cases</h4>
+                <div class="use-case-list">
+                    <div class="use-case-item">
+                        <div class="use-case-icon" style="background:#e7f3ff;">
+                            <svg width="16" height="16" viewBox="0 0 16 16">
+                                <rect x="2" y="2" width="12" height="12" rx="1" fill="none" stroke="#004080" stroke-width="2"/>
+                                <line x1="4" y1="5" x2="12" y2="5" stroke="#004080" stroke-width="1.5"/>
+                                <line x1="4" y1="8" x2="12" y2="8" stroke="#004080" stroke-width="1.5"/>
+                                <line x1="4" y1="11" x2="9" y2="11" stroke="#004080" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <div class="use-case-details">
+                            <strong>DHIS2 Exports</strong><br>
+                            Rename cryptic data element codes like <code>DE_MAL_001</code> to <em>Malaria Confirmed Cases</em>
+                        </div>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="use-case-icon" style="background:#fff3cd;">
+                            <svg width="16" height="16" viewBox="0 0 16 16">
+                                <circle cx="8" cy="8" r="6" fill="none" stroke="#856404" stroke-width="2"/>
+                                <line x1="8" y1="5" x2="8" y2="8" stroke="#856404" stroke-width="1.5"/>
+                                <circle cx="8" cy="10" r="1" fill="#856404"/>
+                            </svg>
+                        </div>
+                        <div class="use-case-details">
+                            <strong>Survey Coded Responses</strong><br>
+                            Decode <code>1/0</code> to <em>Yes/No</em>, or <code>1/2/3</code> to <em>Agree/Neutral/Disagree</em>
+                        </div>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="use-case-icon" style="background:#d4edda;">
+                            <svg width="16" height="16" viewBox="0 0 16 16">
+                                <path d="M8 2 L14 14 L2 14 Z" fill="none" stroke="#28a745" stroke-width="1.5"/>
+                                <line x1="8" y1="7" x2="8" y2="10" stroke="#28a745" stroke-width="1.5"/>
+                                <circle cx="8" cy="12" r="1" fill="#28a745"/>
+                            </svg>
+                        </div>
+                        <div class="use-case-details">
+                            <strong>Org Unit Abbreviations</strong><br>
+                            Expand <code>WU</code>, <code>BO</code>, <code>BM</code> to full district names for reports
+                        </div>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="use-case-icon" style="background:#f8d7da;">
+                            <svg width="16" height="16" viewBox="0 0 16 16">
+                                <rect x="2" y="6" width="12" height="4" rx="1" fill="#dc3545"/>
+                                <rect x="6" y="2" width="4" height="12" rx="1" fill="#dc3545"/>
+                            </svg>
+                        </div>
+                        <div class="use-case-details">
+                            <strong>Multi-Partner Data Merge</strong><br>
+                            Standardise inconsistent column naming across WHO, UNICEF, and NGO datasets
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h4>Key Features</h4>
+                <p style="font-size:11px; color:#444; margin-bottom:10px; font-weight:500;">Everything you need to clean up variable and value names in one place.</p>
+                <div class="feature-grid-sm">
+                    <div class="feature-item-sm">
+                        <div class="check-circle"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="2,5 4,7 8,3" fill="none" stroke="#fff" stroke-width="1.5"/></svg></div>
+                        <span><strong>Type Badges</strong> — Numeric vs Categorical</span>
+                    </div>
+                    <div class="feature-item-sm">
+                        <div class="check-circle"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="2,5 4,7 8,3" fill="none" stroke="#fff" stroke-width="1.5"/></svg></div>
+                        <span><strong>Frequency Counts</strong> per unique value</span>
+                    </div>
+                    <div class="feature-item-sm">
+                        <div class="check-circle"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="2,5 4,7 8,3" fill="none" stroke="#fff" stroke-width="1.5"/></svg></div>
+                        <span><strong>Bulk Find &amp; Replace</strong> across values</span>
+                    </div>
+                    <div class="feature-item-sm">
+                        <div class="check-circle"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="2,5 4,7 8,3" fill="none" stroke="#fff" stroke-width="1.5"/></svg></div>
+                        <span><strong>4 Text Transforms</strong> (case changes)</span>
+                    </div>
+                    <div class="feature-item-sm">
+                        <div class="check-circle"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="2,5 4,7 8,3" fill="none" stroke="#fff" stroke-width="1.5"/></svg></div>
+                        <span><strong>Duplicate Detection</strong> validates renames</span>
+                    </div>
+                    <div class="feature-item-sm">
+                        <div class="check-circle"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="2,5 4,7 8,3" fill="none" stroke="#fff" stroke-width="1.5"/></svg></div>
+                        <span><strong>Before/After Column</strong> comparison view</span>
+                    </div>
+                    <div class="feature-item-sm">
+                        <div class="check-circle"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="2,5 4,7 8,3" fill="none" stroke="#fff" stroke-width="1.5"/></svg></div>
+                        <span><strong>Change Log Sheet</strong> in Excel export</span>
+                    </div>
+                    <div class="feature-item-sm">
+                        <div class="check-circle"><svg width="10" height="10" viewBox="0 0 10 10"><polyline points="2,5 4,7 8,3" fill="none" stroke="#fff" stroke-width="1.5"/></svg></div>
+                        <span><strong>All Columns Preserved</strong> — no data lost</span>
+                    </div>
+                </div>
+                <div class="tip-box">
+                    <strong>Tip:</strong> The Excel download includes a <em>Change Log</em> sheet that records every rename (column &amp; value) with timestamps — perfect for audit trails and documentation.
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /tool-section -->
+
+    <div class="footer">
+        <strong>Informatics Consultancy Firm-Sierra Leone (ICF-SL)</strong><br>
+        <span style="font-size:11px; opacity:0.8;">Driving Data-Driven Solutions for Health and Development</span>
+    </div>
+
+</div>
+</body>
+</html>
